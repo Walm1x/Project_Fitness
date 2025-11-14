@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Бронирование</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+    <a href="booking.html">Бронирование</a>
+    <a href="reports.html">Отчёты</a>
+    <a href="availability.html">Доступность</a>
+    <a href="login.html">Выйти</a>
+</nav>
+
+<h1>Создать бронирование</h1>
+
+<div class="card">
+<form id="bookingForm">
+
+    <label>Тренер ID</label>
+    <input type="number" name="trainer_id" required>
+
+    <label>Зона ID</label>
+    <input type="number" name="zone_id" required>
+
+    <label>Дата</label>
+    <input type="date" name="date" required>
+
+    <label>Начало</label>
+    <input type="time" name="start_time" required>
+
+    <label>Длительность (часы)</label>
+    <input type="number" name="duration" min="1" required>
+
+    <label>Тип услуги</label>
+    <select name="type">
+        <option value="personal">Персональная тренировка</option>
+        <option value="group">Групповое занятие</option>
+        <option value="zone">Аренда зоны</option>
+    </select>
+
+    <button>Забронировать</button>
+</form>
+
+<div class="message" id="message"></div>
+</div>
+
+<script src="api.js"></script>
+</body>
+</html>
