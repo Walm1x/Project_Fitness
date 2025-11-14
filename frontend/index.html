@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Фитнес центр</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Бронирование</h1>
+<form id="bookingForm">
+    <label>Пользователь ID: <input type="number" name="user_id" required></label><br>
+    <label>Тренер ID: <input type="number" name="trainer_id" required></label><br>
+    <label>Зона ID: <input type="number" name="zone_id" required></label><br>
+    <label>Дата: <input type="date" name="date" required></label><br>
+    <label>Время начала: <input type="time" name="start_time" required></label><br>
+    <label>Длительность (часы): <input type="number" name="duration" required></label><br>
+    <label>Тип бронирования: 
+        <select name="type">
+            <option value="personal">Персональная</option>
+            <option value="group">Групповая</option>
+            <option value="zone">Зона</option>
+        </select>
+    </label><br>
+    <button type="submit">Забронировать</button>
+</form>
+<div id="message"></div>
+<script src="api.js"></script>
+</body>
+</html>
