@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Вход</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Вход в систему</h1>
+
+<div class="card">
+    <form id="loginForm">
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Пароль</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">Войти</button>
+    </form>
+
+    <div class="message" id="msg"></div>
+
+    <nav>
+        <a href="register.html">Регистрация</a> |
+        <a href="admin.html">Вход администратора</a>
+    </nav>
+</div>
+
+<script src="api.js"></script>
+</body>
+</html>
