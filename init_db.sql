@@ -40,9 +40,9 @@ CREATE TABLE IF NOT EXISTS bookings (
   start_time TIME,
   duration_minutes INT,
   type VARCHAR(50),
-  FOREIGN KEY(user_id) REFERENCES users(id),
-  FOREIGN KEY(trainer_id) REFERENCES trainers(id),
-  FOREIGN KEY(zone_id) REFERENCES zones(id)
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY(trainer_id) REFERENCES trainers(id) ON DELETE CASCADE,
+  FOREIGN KEY(zone_id) REFERENCES zones(id) ON DELETE CASCADE
 );
 
 -- Индекс для ускорения поиска
