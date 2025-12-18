@@ -358,3 +358,118 @@ app.listen(PORT, () => {
   console.log('   👤 Обычный вход: ivan@example.com / password123');
   console.log('   🔐 Админ вход:   admin@example.com / admin123');
 });
+// =====================================================
+// ===== ADDED FOR TASK 2 ===============================
+// ===== Проверка занятости + альтернативы ==============
+// =====================================================
+app.post('/bookings/check', async (req, res) => {
+  try {
+    const { date, start_time, trainer_id, zone_id } = req.body;
+
+    // Проверяем, есть ли конфликт
+    const conflicts = await query(
+      `SELECT * FROM bookings
+       WHERE date = ?
+       AND start_time = ?
+       AND (trainer_id = ? OR zone_id = ?)`,
+      [date, start_time, trainer_id, zone_id]
+    );
+
+    // Если свободно — сразу сообщаем
+    if (conflicts.length === 0) {
+      return res.json({
+        available: true,
+        message: "Выбранное время свободно"
+      });
+    }
+
+    // ---- Альтернативное время ----
+    const alternativeTimes = await query(`
+      SELECT time_slot
+      FROM time_slots
+      WHERE time_slot NOT IN (
+        SELECT start_time FROM bookings WHERE date = ?
+      )
+      ORDER BY time_slot
+      LIMIT 5
+    `, [date]);
+
+    // ---- Альтернативные зоны ----
+    const alternativeZones = await query(`
+      SELECT * FROM zones
+      WHERE id NOT IN (
+        SELECT zone_id FROM bookings
+        WHERE date = ? AND start_time = ?
+      )
+    `, [date, start_time]);
+
+    res.json({
+      available: false,
+      message: "Выбранное время занято",
+      alternatives: {
+        times: alternativeTimes,
+        zones: alternativeZones
+      }
+    });
+
+  } catch (err) {
+    console.log('Ошибка проверки доступности:', err);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+
+// =====================================================
+// ===== ADDED FOR TASK 4 ===============================
+// ===== Отчет по доступности на дату ===================
+// =====================================================
+app.get('/availability', async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ error: "Не указана дата" });
+    }
+
+    // Свободные тренеры
+    const freeTrainers = await query(`
+      SELECT * FROM trainers
+      WHERE id NOT IN (
+        SELECT DISTINCT trainer_id
+        FROM bookings
+        WHERE date = ?
+      )
+    `, [date]);
+
+    // Свободные зоны
+    const freeZones = await query(`
+      SELECT * FROM zones
+      WHERE id NOT IN (
+        SELECT DISTINCT zone_id
+        FROM bookings
+        WHERE date = ?
+      )
+    `, [date]);
+
+    // Свободные временные слоты
+    const freeTimeSlots = await query(`
+      SELECT time_slot
+      FROM time_slots
+      WHERE time_slot NOT IN (
+        SELECT start_time FROM bookings WHERE date = ?
+      )
+      ORDER BY time_slot
+    `, [date]);
+
+    res.json({
+      date,
+      free_trainers: freeTrainers,
+      free_zones: freeZones,
+      free_time_slots: freeTimeSlots
+    });
+
+  } catch (err) {
+    console.log('Ошибка отчета доступности:', err);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
